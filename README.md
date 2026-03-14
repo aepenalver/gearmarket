@@ -2,7 +2,7 @@
 
 Marketplace de artículos deportivos
 
-![logo](./documentation/.assets/logo1.jpeg)
+![logo](https://raw.githubusercontent.com/aepenalver/gearmarket/assets-repo/assets/logo1.jpeg)
 
 ## Problema que resuelve
 

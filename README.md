@@ -16,7 +16,7 @@ _GearMarket_ será un marketplace especializado en equipamiento deportivo.
 
 ## Propuesta, Diseño y Requerimientos
 
-Ir a directorio -> [/documentation](./documentation/)
+Ir a directorio [/documentation](./documentation/)
 
 ## Autores
 

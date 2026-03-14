@@ -17,7 +17,7 @@
 
 **Requerimiento 5: Diseñar el contrato de datos de la API REST**
 
-- Ver [contrato-api-rest.md](./documentation/api/contrato-api-rest.md)
+- Ver [contrato-api-rest.md](./api/contrato-api-rest.md)
 
 </details>
 

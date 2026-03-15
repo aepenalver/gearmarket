@@ -1,0 +1,132 @@
+openapi: 3.0.3
+info:
+  title: GearMarket API
+  version: 1.0.0
+  description: Contrato base definido para el Hito 1
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /auth/register:
+    post:
+      summary: Registrar usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario registrado
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso
+  /publications:
+    get:
+      summary: Listar publicaciones
+      responses:
+        '200':
+          description: Lista de publicaciones
+    post:
+      summary: Crear publicación
+      responses:
+        '201':
+          description: Publicación creada
+  /publications/{id}:
+    get:
+      summary: Obtener detalle de publicación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalle de publicación
+    put:
+      summary: Actualizar publicación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Publicación actualizada
+    delete:
+      summary: Eliminar publicación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Publicación eliminada
+  /favorites:
+    get:
+      summary: Listar favoritos
+      responses:
+        '200':
+          description: Lista de favoritos
+    post:
+      summary: Agregar favorito
+      responses:
+        '201':
+          description: Favorito agregado
+  /favorites/{publicationId}:
+    delete:
+      summary: Eliminar favorito
+      parameters:
+        - name: publicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Favorito eliminado
+  /messages:
+    post:
+      summary: Enviar mensaje
+      responses:
+        '201':
+          description: Mensaje enviado
+  /profile:
+    get:
+      summary: Obtener perfil
+      responses:
+        '200':
+          description: Perfil del usuario
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string

@@ -46,7 +46,7 @@ git clone https://github.com/aepenalver/gearmarket
 cd gearmarket
 ```
 
-## Estructura des proyecto
+## Estructura del proyecto
 
 ```bash
 .

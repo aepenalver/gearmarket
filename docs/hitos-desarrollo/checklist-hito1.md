@@ -11,7 +11,7 @@
   - [x] Galería de publicaciones
   - [x] Vista de detalle de publicación
 
-- [x] Navegación entre vistas marcando las públicas y privadas (Ir a → [navegacion](../navegacion/))
+- [x] Navegación entre vistas marcando las públicas y privadas (Ir a → [navegación](../navegacion/))
 
 - [x] Listado de dependencias a utilizar en el proyecto (Ir a → [dependencias](../dependencias.md))
 

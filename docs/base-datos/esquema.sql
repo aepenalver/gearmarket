@@ -1,4 +1,4 @@
--- GearMarket · esquema inicial PostgreSQL
+-- Esquema inicial PostgreSQL
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,

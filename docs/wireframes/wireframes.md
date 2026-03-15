@@ -1,4 +1,4 @@
-# 04 · Wireframes y vistas
+# Wireframes y vistas
 - Vista Desktop : https://www.figma.com/design/BhePSdrhVbHo2FUTAeGKxroJ/GearMarket?node-id=0-1&p=f&t=7fQNahqNkFUD8kPj-0
 
 - Vista Mobile : https://www.figma.com/design/BhePSdrhVbHo2FUTAeGKxroJ/GearMarket?node-id=4-10&p=f&t=aFNdPosAooysRP1Z-0

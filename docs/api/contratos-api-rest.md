@@ -1,46 +1,52 @@
-# 06B · Contratos de servicios API REST
+# Contrato de datos API REST
 
 ## Auth
 
 ### POST `/api/v1/auth/register`
+
 **Request**
+
 ```json
 {
-  "name": "Daniel",
-  "email": "daniel@mail.com",
+  "name": "User Name",
+  "email": "user@mail.com",
   "password": "123456"
 }
 ```
 
 **Response 201**
+
 ```json
 {
   "message": "Usuario registrado correctamente",
   "user": {
     "id": 1,
-    "name": "Daniel",
-    "email": "daniel@mail.com"
+    "name": "User Name",
+    "email": "user@mail.com"
   }
 }
 ```
 
 ### POST `/api/v1/auth/login`
+
 **Request**
+
 ```json
 {
-  "email": "daniel@mail.com",
+  "email": "user@mail.com",
   "password": "123456"
 }
 ```
 
 **Response 200**
+
 ```json
 {
   "token": "jwt_token",
   "user": {
     "id": 1,
-    "name": "Daniel",
-    "email": "daniel@mail.com"
+    "name": "User Name",
+    "email": "user@mail.com"
   }
 }
 ```
@@ -48,7 +54,9 @@
 ## Publications
 
 ### GET `/api/v1/publications`
+
 **Response 200**
+
 ```json
 [
   {
@@ -63,7 +71,9 @@
 ```
 
 ### GET `/api/v1/publications/:id`
+
 **Response 200**
+
 ```json
 {
   "id": 1,
@@ -75,13 +85,15 @@
   "location": "Valparaíso",
   "seller": {
     "id": 4,
-    "name": "Camila"
+    "name": "Seller Name"
   }
 }
 ```
 
 ### POST `/api/v1/publications`
+
 **Request**
+
 ```json
 {
   "title": "Bicicleta Trek",
@@ -94,6 +106,7 @@
 ```
 
 **Response 201**
+
 ```json
 {
   "message": "Publicación creada correctamente",
@@ -102,7 +115,9 @@
 ```
 
 ### PUT `/api/v1/publications/:id`
+
 **Request**
+
 ```json
 {
   "title": "Bicicleta Trek Marlin 7",
@@ -111,6 +126,7 @@
 ```
 
 **Response 200**
+
 ```json
 {
   "message": "Publicación actualizada correctamente"
@@ -118,7 +134,9 @@
 ```
 
 ### DELETE `/api/v1/publications/:id`
+
 **Response 200**
+
 ```json
 {
   "message": "Publicación eliminada correctamente"
@@ -128,7 +146,9 @@
 ## Favorites
 
 ### GET `/api/v1/favorites`
+
 **Response 200**
+
 ```json
 [
   {
@@ -140,7 +160,9 @@
 ```
 
 ### POST `/api/v1/favorites`
+
 **Request**
+
 ```json
 {
   "publication_id": 10
@@ -148,6 +170,7 @@
 ```
 
 **Response 201**
+
 ```json
 {
   "message": "Favorito agregado"
@@ -155,7 +178,9 @@
 ```
 
 ### DELETE `/api/v1/favorites/:publicationId`
+
 **Response 200**
+
 ```json
 {
   "message": "Favorito eliminado"
@@ -165,7 +190,9 @@
 ## Messages
 
 ### POST `/api/v1/messages`
+
 **Request**
+
 ```json
 {
   "publication_id": 10,
@@ -175,6 +202,7 @@
 ```
 
 **Response 201**
+
 ```json
 {
   "message": "Mensaje enviado correctamente"
@@ -184,12 +212,14 @@
 ## Profile
 
 ### GET `/api/v1/profile`
+
 **Response 200**
+
 ```json
 {
   "id": 1,
-  "name": "Daniel",
-  "email": "daniel@mail.com",
+  "name": "User Name",
+  "email": "user@mail.com",
   "avatar": null
 }
 ```

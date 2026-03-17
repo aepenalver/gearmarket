@@ -11,11 +11,10 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
-      <div className="container py-2">
-        <Link className="navbar-brand fw-bold text-primary d-flex align-items-center gap-2" to="/">
-          <span className="brand-badge">GM</span>
-          GearMarket
+    <nav className="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm custom-navbar">
+      <div className="container py-1">
+        <Link className="navbar-brand fw-bold text-primary" to="/">
+          <img src="/logo1.jpeg" alt="GearMarket Logo" className="navbar-logo" />
         </Link>
 
         <button

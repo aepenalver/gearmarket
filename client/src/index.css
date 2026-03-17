@@ -30,6 +30,18 @@ img {
   font-size: 0.875rem;
 }
 
+.navbar-logo {
+  width: 18rem;
+  height: 8rem;
+  border-radius: 0 !important;
+  object-fit: contain;
+}
+
+.custom-navbar {
+  min-height: auto;
+  height: auto;
+}
+
 .hero-section {
   background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #0f172a 100%);
 }

@@ -1,0 +1,80 @@
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { publicationsService } from '../services/api';
+import { formatCurrency } from '../utils/format';
+
+function ProductDetailPage() {
+  const { id } = useParams();
+  const [publication, setPublication] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPublication = async () => {
+      setLoading(true);
+      try {
+        const response = await publicationsService.getById(id);
+        setPublication(response.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPublication();
+  }, [id]);
+
+  if (loading) {
+    return <div className="alert alert-info">Cargando detalle...</div>;
+  }
+
+  if (!publication) {
+    return <div className="alert alert-warning">No existe la publicación solicitada.</div>;
+  }
+
+  return (
+    <section className="card border-0 shadow-sm rounded-4 overflow-hidden">
+      <div className="row g-0">
+        <div className="col-lg-6">
+          <img src={publication.image_url} alt={publication.title} className="detail-image" />
+        </div>
+        <div className="col-lg-6">
+          <div className="card-body p-4 p-lg-5">
+            <span className="badge bg-primary-subtle text-primary text-uppercase mb-3">
+              {publication.category}
+            </span>
+            <h1 className="display-6 fw-bold mb-3">{publication.title}</h1>
+            <p className="text-body-secondary">{publication.description}</p>
+            <div className="fs-3 fw-bold text-success mb-3">{formatCurrency(publication.price)}</div>
+
+            <div className="row row-cols-1 row-cols-sm-2 g-3 mb-4">
+              <div>
+                <div className="text-body-secondary small">Ubicación</div>
+                <div className="fw-semibold">{publication.location}</div>
+              </div>
+              <div>
+                <div className="text-body-secondary small">Vendedor</div>
+                <div className="fw-semibold">{publication.seller?.name}</div>
+              </div>
+              <div>
+                <div className="text-body-secondary small">Estado</div>
+                <div className="fw-semibold">{publication.condition}</div>
+              </div>
+              <div>
+                <div className="text-body-secondary small">Contacto</div>
+                <div className="fw-semibold">Disponible por mensaje</div>
+              </div>
+            </div>
+
+            <div className="d-flex flex-wrap gap-3">
+              <button className="btn btn-warning">Contactar vendedor</button>
+              <Link className="btn btn-outline-primary" to="/galeria">
+                Volver a la galería
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default ProductDetailPage;

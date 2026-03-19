@@ -1,7 +1,7 @@
 export const mockUser = {
   id: 1,
-  name: 'Daniel Deportista',
-  email: 'daniel@gearmarket.cl',
+  name: 'User Deportista',
+  email: 'user@gearmarket.cl',
   avatar: null,
 };
 
@@ -80,12 +80,4 @@ export const mockPublications = [
   },
 ];
 
-export const mockCategories = [
-  'todos',
-  'ciclismo',
-  'fitness',
-  'running',
-  'tenis',
-  'surf',
-  'basquetbol',
-];
+export const mockCategories = ['todos', 'ciclismo', 'fitness', 'running', 'tenis', 'surf', 'basquetbol'];

@@ -1,7 +1,7 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import AppRouter from './routes/AppRouter';
 
 function App() {
-  return <h1>GearMarket</h1>;
+  return <AppRouter />;
 }
 
 export default App;

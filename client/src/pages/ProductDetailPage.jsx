@@ -26,7 +26,6 @@ function ProductDetailPage() {
     loadPublication();
   }, [id]);
 
-  // Manejador de eliminación simulada
   const handleDelete = async () => {
     setTimeout(() => {
       navigate('/mis-publicaciones');

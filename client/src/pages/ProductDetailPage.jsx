@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { publicationsService } from '../services/api';
 import { formatCurrency } from '../utils/format';
 import { useAuth } from '../hooks/useAuth';
+import { usePublications } from '../hooks/usePublications';
 
 function ProductDetailPage() {
   const { id } = useParams();
@@ -11,25 +12,33 @@ function ProductDetailPage() {
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAuth();
+  const { getPublicationById, deletePublication } = usePublications();
 
   useEffect(() => {
     const loadPublication = async () => {
       setLoading(true);
+
+      const localPublication = getPublicationById(id);
+      if (localPublication) {
+        setPublication(localPublication);
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await publicationsService.getById(id);
-        setPublication(response.data);
+        setPublication(response.data || null);
       } finally {
         setLoading(false);
       }
     };
 
     loadPublication();
-  }, [id]);
+  }, [getPublicationById, id]);
 
   const handleDelete = async () => {
-    setTimeout(() => {
-      navigate('/mis-publicaciones');
-    }, 1000);
+    await deletePublication(id);
+    navigate('/mis-publicaciones');
   };
 
   if (loading) {
@@ -41,14 +50,14 @@ function ProductDetailPage() {
   }
 
   return (
-    <section className='card border-0 shadow-sm rounded-4 overflow-hidden'>
+    <section className='card border-0 shadow-sm rounded-4 overflow-hidden detail-card'>
       <div className='row g-0'>
         <div className='col-lg-6'>
           <img src={publication.image_url} alt={publication.title} className='detail-image' />
         </div>
         <div className='col-lg-6'>
           <div className='card-body p-4 p-lg-5'>
-            <span className='badge bg-primary-subtle text-primary text-uppercase mb-3'>{publication.category}</span>
+            <span className='badge detail-badge text-uppercase mb-3'>{publication.category}</span>
             <h1 className='display-6 fw-bold mb-3'>{publication.title}</h1>
             <p className='text-body-secondary'>{publication.description}</p>
             <div className='fs-3 fw-bold text-success mb-3'>{formatCurrency(publication.price)}</div>

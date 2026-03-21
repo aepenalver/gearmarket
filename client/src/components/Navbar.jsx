@@ -55,7 +55,7 @@ function Navbar() {
                   </NavLink>
                 </li>
                 <li className="nav-item ms-lg-3">
-                  <span className="small text-body-secondary d-block">Hola, {user?.name}</span>
+                  <span className="small text-light d-block">Hola, {user?.name}</span>
                 </li>
                 <li className="nav-item">
                   <button className="btn btn-outline-primary btn-sm" onClick={handleLogout}>

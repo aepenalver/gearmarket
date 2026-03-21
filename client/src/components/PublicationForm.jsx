@@ -3,36 +3,39 @@ import { useEffect } from 'react';
 import { mockCategories } from '../data/mockData';
 
 function PublicationForm({ onSubmit, submitting, initialData }) {
+  const defaultFormValues = {
+    title: '',
+    description: '',
+    price: '',
+    image_url: '',
+    category: 'ciclismo',
+    location: '',
+    condition: 'Usado',
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues: initialData || {
-      title: '',
-      description: '',
-      price: '',
-      image_url: '',
-      category: 'Ciclismo',
-      location: '',
-      condition: 'Usado',
-    },
+    defaultValues: initialData || defaultFormValues,
   });
 
   useEffect(() => {
-    if (initialData) {
-      reset(initialData);
-    }
+    reset(initialData || defaultFormValues);
   }, [initialData, reset]);
 
   const submitHandler = async (values) => {
     await onSubmit({ ...values, price: Number(values.price) });
-    reset();
+
+    if (!initialData) {
+      reset(defaultFormValues);
+    }
   };
 
   return (
-    <form className='card border-0 shadow-sm rounded-4' onSubmit={handleSubmit(submitHandler)}>
+    <form className='card border-0 shadow-sm rounded-4 publication-form' onSubmit={handleSubmit(submitHandler)}>
       <div className='card-body p-4'>
         <div className='row g-3'>
           <div className='col-md-6'>

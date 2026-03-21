@@ -2,35 +2,35 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PublicationForm from '../components/PublicationForm';
 import SectionTitle from '../components/SectionTitle';
-import { mockPublications } from '../data/mockData';
+import { usePublications } from '../hooks/usePublications';
 
 function EditPublicationPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getPublicationById, updatePublication } = usePublications();
 
   const [publication, setPublication] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const data = mockPublications.find((item) => item.id === Number(id));
+    const data = getPublicationById(id);
 
     if (data) {
       setPublication(data);
     }
     setLoading(false);
-  }, [id]);
+  }, [getPublicationById, id]);
 
   const handleUpdate = async (updatedValues) => {
     setSubmitting(true);
 
-    setTimeout(() => {
-      console.log('Nuevos valores capturados:', updatedValues);
-      alert('Cambios guardados en memoria (se perderán al recargar)');
-
+    try {
+      await updatePublication(id, updatedValues);
+      navigate(`/publicaciones/${id}`);
+    } finally {
       setSubmitting(false);
-      navigate('/mis-publicaciones');
-    }, 1000);
+    }
   };
 
   if (loading) return <div className='p-5 text-center'>Buscando publicación...</div>;
@@ -38,7 +38,7 @@ function EditPublicationPage() {
 
   return (
     <section className='container py-4'>
-      <SectionTitle eyebrow='Modo Editor' title={`Editando: ${publication.title}`} description='Los cambios realizados aquí solo persistirán durante esta sesión de navegador.' />
+      <SectionTitle eyebrow='Modo Editor' title={`Editando: ${publication.title}`} description='Los cambios se guardan en el estado global y persisten en localStorage mientras no se limpie el navegador.' />
 
       <PublicationForm onSubmit={handleUpdate} submitting={submitting} initialData={publication} />
     </section>

@@ -11,7 +11,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm custom-navbar">
+    <nav className="navbar navbar-expand-lg border-bottom sticky-top shadow-sm custom-navbar">
       <div className="container py-1">
         <Link className="navbar-brand fw-bold text-primary" to="/">
           <img src="/logo1.jpeg" alt="GearMarket Logo" className="navbar-logo" />
@@ -55,7 +55,7 @@ function Navbar() {
                   </NavLink>
                 </li>
                 <li className="nav-item ms-lg-3">
-                  <span className="small text-body-secondary d-block">Hola, {user?.name}</span>
+                  <span className="small text-light d-block">Hola, {user?.name}</span>
                 </li>
                 <li className="nav-item">
                   <button className="btn btn-outline-primary btn-sm" onClick={handleLogout}>

@@ -41,7 +41,7 @@ export const publicationsService = {
       return await api.get(`/publications/${id}`);
     } catch {
       const publication = mockPublications.find((item) => item.id === Number(id));
-      return wait(publication);
+      return wait(publication || null);
     }
   },
   create: async (payload) => {
@@ -49,6 +49,20 @@ export const publicationsService = {
       return await api.post('/publications', payload);
     } catch {
       return wait({ message: 'Publicación creada correctamente', publication_id: Date.now() });
+    }
+  },
+  update: async (id, payload) => {
+    try {
+      return await api.put(`/publications/${id}`, payload);
+    } catch {
+      return wait({ message: 'Publicación actualizada correctamente', publication: { ...payload, id: Number(id) } });
+    }
+  },
+  remove: async (id) => {
+    try {
+      return await api.delete(`/publications/${id}`);
+    } catch {
+      return wait({ message: 'Publicación eliminada correctamente', id: Number(id) });
     }
   },
 };

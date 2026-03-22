@@ -12,6 +12,9 @@ export const usePublications = () => {
     setFilters,
     toggleFavorite,
     createPublication,
+    updatePublication,
+    deletePublication,
+    getPublicationById,
   } = useAppContext();
 
   const stats = useMemo(
@@ -33,6 +36,9 @@ export const usePublications = () => {
     setFilters,
     toggleFavorite,
     createPublication,
+    updatePublication,
+    deletePublication,
+    getPublicationById,
     stats,
   };
 };

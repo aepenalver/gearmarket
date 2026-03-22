@@ -1,8 +1,18 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { mockPublications, mockUser } from '../data/mockData';
 import { authService, publicationsService } from '../services/api';
 
 const AppContext = createContext();
+const PUBLICATIONS_STORAGE_KEY = 'gearmarket_publications';
+
+const normalizePublication = (publication, currentUser = mockUser) => ({
+  ...publication,
+  id: Number(publication.id),
+  price: Number(publication.price),
+  seller: publication.seller || currentUser,
+  isFavorite: Boolean(publication.isFavorite),
+  condition: publication.condition || 'Usado',
+});
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -10,7 +20,20 @@ export function AppProvider({ children }) {
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [token, setToken] = useState(() => localStorage.getItem('gearmarket_token'));
-  const [publications, setPublications] = useState([]);
+  const [publications, setPublications] = useState(() => {
+    const storedPublications = localStorage.getItem(PUBLICATIONS_STORAGE_KEY);
+
+    if (!storedPublications) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(storedPublications).map((publication) => normalizePublication(publication));
+    } catch {
+      localStorage.removeItem(PUBLICATIONS_STORAGE_KEY);
+      return [];
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
@@ -27,16 +50,23 @@ export function AppProvider({ children }) {
   }, [token, user]);
 
   useEffect(() => {
-    fetchPublications();
+    localStorage.setItem(PUBLICATIONS_STORAGE_KEY, JSON.stringify(publications));
+  }, [publications]);
+
+  useEffect(() => {
+    if (publications.length === 0) {
+      fetchPublications();
+    }
   }, []);
 
   const fetchPublications = async () => {
     setLoading(true);
     try {
       const response = await publicationsService.getAll();
-      setPublications(response.data || []);
+      const sourceData = Array.isArray(response.data) && response.data.length > 0 ? response.data : mockPublications;
+      setPublications(sourceData.map((publication) => normalizePublication(publication, user || mockUser)));
     } catch {
-      setPublications(mockPublications);
+      setPublications(mockPublications.map((publication) => normalizePublication(publication, user || mockUser)));
     } finally {
       setLoading(false);
     }
@@ -63,6 +93,12 @@ export function AppProvider({ children }) {
     localStorage.removeItem('gearmarket_user');
   };
 
+  const getPublicationById = useCallback(
+    (publicationId) =>
+      publications.find((publication) => Number(publication.id) === Number(publicationId)) || null,
+    [publications],
+  );
+
   const toggleFavorite = (publicationId) => {
     setPublications((current) =>
       current.map((publication) =>
@@ -75,16 +111,56 @@ export function AppProvider({ children }) {
 
   const createPublication = async (payload) => {
     const response = await publicationsService.create(payload);
-    const newPublication = {
-      id: response.data.publication_id || Date.now(),
-      ...payload,
-      seller: user || mockUser,
-      isFavorite: false,
-      condition: payload.condition || 'Usado',
-    };
+    const newPublication = normalizePublication(
+      {
+        id: response.data.publication_id || Date.now(),
+        ...payload,
+        seller: user || mockUser,
+        isFavorite: false,
+      },
+      user || mockUser,
+    );
 
     setPublications((current) => [newPublication, ...current]);
     return newPublication;
+  };
+
+  const updatePublication = async (publicationId, payload) => {
+    const updatedPublication = normalizePublication(
+      {
+        ...getPublicationById(publicationId),
+        ...payload,
+        id: Number(publicationId),
+        seller: getPublicationById(publicationId)?.seller || user || mockUser,
+      },
+      user || mockUser,
+    );
+
+    try {
+      await publicationsService.update(publicationId, updatedPublication);
+    } catch {
+      // Fallback local ya cubierto abajo.
+    }
+
+    setPublications((current) =>
+      current.map((publication) =>
+        Number(publication.id) === Number(publicationId) ? updatedPublication : publication,
+      ),
+    );
+
+    return updatedPublication;
+  };
+
+  const deletePublication = async (publicationId) => {
+    try {
+      await publicationsService.remove(publicationId);
+    } catch {
+      // Fallback local ya cubierto abajo.
+    }
+
+    setPublications((current) =>
+      current.filter((publication) => Number(publication.id) !== Number(publicationId)),
+    );
   };
 
   const filteredPublications = useMemo(() => {
@@ -121,6 +197,9 @@ export function AppProvider({ children }) {
     logout,
     toggleFavorite,
     createPublication,
+    updatePublication,
+    deletePublication,
+    getPublicationById,
     fetchPublications,
   };
 

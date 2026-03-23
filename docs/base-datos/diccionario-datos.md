@@ -39,3 +39,6 @@
 | publication_id | INT | FK → publications.id |
 | message | TEXT | obligatorio |
 | created_at | TIMESTAMP | default current_timestamp |
+
+
+> Nota: el modelo `messages` ya permite respuestas entre comprador y vendedor sin crear nuevas tablas, porque cada respuesta se guarda como un nuevo registro con `sender_id`, `receiver_id` y `publication_id`. Para una versión más avanzada podrían agregarse `read_at`, `parent_message_id` o `conversation_id`, pero para Hito 3 no es obligatorio.

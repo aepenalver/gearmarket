@@ -7,20 +7,28 @@ import { usePublications } from '../hooks/usePublications';
 function EditPublicationPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getPublicationById, updatePublication } = usePublications();
+  const { getPublicationById, updatePublication, fetchPublications } = usePublications();
 
   const [publication, setPublication] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const data = getPublicationById(id);
+    const loadPublication = async () => {
+      setLoading(true);
+      let data = getPublicationById(id);
+      if (!data) {
+        await fetchPublications();
+        data = getPublicationById(id);
+      }
+      if (data) {
+        setPublication(data);
+      }
+      setLoading(false);
+    };
 
-    if (data) {
-      setPublication(data);
-    }
-    setLoading(false);
-  }, [getPublicationById, id]);
+    loadPublication();
+  }, [fetchPublications, getPublicationById, id]);
 
   const handleUpdate = async (updatedValues) => {
     setSubmitting(true);
@@ -38,7 +46,7 @@ function EditPublicationPage() {
 
   return (
     <section className='container py-4'>
-      <SectionTitle eyebrow='Modo Editor' title={`Editando: ${publication.title}`} description='Los cambios se guardan en el estado global y persisten en localStorage mientras no se limpie el navegador.' />
+      <SectionTitle eyebrow='Modo Editor' title={`Editando: ${publication.title}`} description='Esta vista ya quedó conectada al backend REST del Hito 3.' />
 
       <PublicationForm onSubmit={handleUpdate} submitting={submitting} initialData={publication} />
     </section>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { publicationsService } from '../services/api';
 import { formatCurrency } from '../utils/format';
 import { useAuth } from '../hooks/useAuth';
@@ -11,7 +11,7 @@ function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { getPublicationById, deletePublication } = usePublications();
 
   useEffect(() => {
@@ -39,6 +39,18 @@ function ProductDetailPage() {
   const handleDelete = async () => {
     await deletePublication(id);
     navigate('/mis-publicaciones');
+  };
+
+  const sellerId = useMemo(() => Number(publication?.seller?.id || publication?.user_id || 0), [publication]);
+  const isOwner = sellerId === Number(user?.id);
+
+  const handleOpenContact = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: `/publicaciones/${id}` } });
+      return;
+    }
+
+    navigate(`/mensajes?publication=${id}&user=${sellerId}`);
   };
 
   if (loading) {
@@ -82,7 +94,7 @@ function ProductDetailPage() {
             </div>
 
             <div className='d-flex flex-wrap gap-3 justify-content-end'>
-              {isAuthenticated ? (
+              {isAuthenticated && isOwner ? (
                 <>
                   <Link className='btn btn-warning' to={`/editar/${id}`}>
                     Editar publicación
@@ -93,7 +105,9 @@ function ProductDetailPage() {
                 </>
               ) : (
                 <>
-                  <button className='btn btn-primary'>Contactar al vendedor</button>
+                  <button className='btn btn-primary' onClick={handleOpenContact}>
+                    Contactar al vendedor
+                  </button>
                   <Link className='btn btn-outline-primary' to='/galeria'>
                     Volver a la galería
                   </Link>

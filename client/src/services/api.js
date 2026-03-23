@@ -1,70 +1,45 @@
 import axios from 'axios';
-import { mockPublications, mockUser } from '../data/mockData';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
-  timeout: 5000,
+  timeout: 10000,
 });
 
-const wait = (data) => new Promise((resolve) => setTimeout(() => resolve({ data }), 250));
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('gearmarket_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const authService = {
-  login: async (payload) => {
-    try {
-      return await api.post('/auth/login', payload);
-    } catch {
-      return wait({ token: 'mock-jwt-token', user: mockUser });
-    }
-  },
-  register: async (payload) => {
-    try {
-      return await api.post('/auth/register', payload);
-    } catch {
-      return wait({
-        message: 'Usuario registrado correctamente',
-        user: { id: 99, name: payload.name, email: payload.email },
-      });
-    }
-  },
+  login: (payload) => api.post('/auth/login', payload),
+  register: (payload) => api.post('/auth/register', payload),
 };
 
 export const publicationsService = {
-  getAll: async () => {
-    try {
-      return await api.get('/publications');
-    } catch {
-      return wait(mockPublications);
-    }
-  },
-  getById: async (id) => {
-    try {
-      return await api.get(`/publications/${id}`);
-    } catch {
-      const publication = mockPublications.find((item) => item.id === Number(id));
-      return wait(publication || null);
-    }
-  },
-  create: async (payload) => {
-    try {
-      return await api.post('/publications', payload);
-    } catch {
-      return wait({ message: 'Publicación creada correctamente', publication_id: Date.now() });
-    }
-  },
-  update: async (id, payload) => {
-    try {
-      return await api.put(`/publications/${id}`, payload);
-    } catch {
-      return wait({ message: 'Publicación actualizada correctamente', publication: { ...payload, id: Number(id) } });
-    }
-  },
-  remove: async (id) => {
-    try {
-      return await api.delete(`/publications/${id}`);
-    } catch {
-      return wait({ message: 'Publicación eliminada correctamente', id: Number(id) });
-    }
-  },
+  getAll: () => api.get('/publications'),
+  getById: (id) => api.get(`/publications/${id}`),
+  create: (payload) => api.post('/publications', payload),
+  update: (id, payload) => api.put(`/publications/${id}`, payload),
+  remove: (id) => api.delete(`/publications/${id}`),
+};
+
+export const favoritesService = {
+  getAll: () => api.get('/favorites'),
+  add: (publicationId) => api.post('/favorites', { publication_id: publicationId }),
+  remove: (publicationId) => api.delete(`/favorites/${publicationId}`),
+};
+
+export const profileService = {
+  get: () => api.get('/profile'),
+};
+
+export const messagesService = {
+  getConversations: () => api.get('/messages'),
+  getThread: (publicationId, userId) => api.get(`/messages/thread/${publicationId}/${userId}`),
+  create: (payload) => api.post('/messages', payload),
 };
 
 export default api;

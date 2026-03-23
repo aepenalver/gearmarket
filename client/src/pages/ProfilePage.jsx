@@ -1,18 +1,25 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SectionTitle from '../components/SectionTitle';
 import { useAuth } from '../hooks/useAuth';
 import { usePublications } from '../hooks/usePublications';
+import { useAppContext } from '../context/AppContext';
 
 function ProfilePage() {
   const { user } = useAuth();
   const { stats } = usePublications();
+  const { refreshProfile } = useAppContext();
+
+  useEffect(() => {
+    refreshProfile().catch(() => undefined);
+  }, [refreshProfile]);
 
   return (
     <section>
       <SectionTitle
         eyebrow="Perfil"
         title={`Bienvenido, ${user?.name}`}
-        description="Vista privada protegida por React Router y estado global de autenticación."
+        description="Vista privada protegida por React Router y conectada al endpoint /profile del backend."
       />
 
       <div className="row g-4">
@@ -23,7 +30,7 @@ function ProfilePage() {
               <h2 className="h4 fw-bold mb-1">{user?.name}</h2>
               <p className="text-body-secondary mb-3">{user?.email}</p>
               <p className="mb-0">
-                Desde aquí podrás administrar publicaciones, revisar favoritos y preparar la integración con el backend del marketplace.
+                Desde aquí podrás administrar publicaciones, revisar favoritos y probar los endpoints privados del Hito 3.
               </p>
             </div>
           </div>

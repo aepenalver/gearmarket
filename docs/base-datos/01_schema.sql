@@ -1,4 +1,7 @@
 -- Hito 3 - Esquema PostgreSQL GearMarket
+CREATE DATABASE gearmarket;
+
+\c gearmarket;\
 
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,

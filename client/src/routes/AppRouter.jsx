@@ -8,6 +8,7 @@ import FavoritesPage from '../pages/FavoritesPage';
 import GalleryPage from '../pages/GalleryPage';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
+import MessagesPage from '../pages/MessagesPage';
 import MyPublicationsPage from '../pages/MyPublicationsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
@@ -40,6 +41,7 @@ function AppRouter() {
           <Route path='/crear-publicacion' element={<CreatePublicationPage />} />
           <Route path='/editar/:id' element={<EditPublicationPage />} />
           <Route path='/favoritos' element={<FavoritesPage />} />
+          <Route path='/mensajes' element={<MessagesPage />} />
         </Route>
 
         <Route path='*' element={<NotFoundPage />} />

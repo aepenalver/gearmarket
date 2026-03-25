@@ -1,10 +1,12 @@
 {
   "name": "gearmarket-server",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Backend Hito 3 para GearMarket",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -15,6 +17,11 @@
     "pg": "^8.12.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.1.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

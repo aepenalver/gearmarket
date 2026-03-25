@@ -1,15 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { mockPublications, mockUser } from '../data/mockData';
-import { authService, publicationsService } from '../services/api';
+import { authService, favoritesService, profileService, publicationsService } from '../services/api';
 
 const AppContext = createContext();
-const PUBLICATIONS_STORAGE_KEY = 'gearmarket_publications';
 
-const normalizePublication = (publication, currentUser = mockUser) => ({
+const normalizePublication = (publication) => ({
   ...publication,
   id: Number(publication.id),
   price: Number(publication.price),
-  seller: publication.seller || currentUser,
+  seller: publication.seller || publication.user || null,
   isFavorite: Boolean(publication.isFavorite),
   condition: publication.condition || 'Usado',
 });
@@ -19,29 +17,19 @@ export function AppProvider({ children }) {
     const storedUser = localStorage.getItem('gearmarket_user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
-  const [token, setToken] = useState(() => localStorage.getItem('gearmarket_token'));
-  const [publications, setPublications] = useState(() => {
-    const storedPublications = localStorage.getItem(PUBLICATIONS_STORAGE_KEY);
-
-    if (!storedPublications) {
-      return [];
-    }
-
-    try {
-      return JSON.parse(storedPublications).map((publication) => normalizePublication(publication));
-    } catch {
-      localStorage.removeItem(PUBLICATIONS_STORAGE_KEY);
-      return [];
-    }
-  });
+  const [token, setToken] = useState(() => localStorage.getItem('gearmarket_token') || '');
+  const [publications, setPublications] = useState([]);
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    search: '',
-    category: 'todos',
-  });
+  const [filters, setFilters] = useState({ search: '', category: 'todos' });
 
   useEffect(() => {
-    localStorage.setItem('gearmarket_token', token || '');
+    if (token) {
+      localStorage.setItem('gearmarket_token', token);
+    } else {
+      localStorage.removeItem('gearmarket_token');
+    }
+
     if (user) {
       localStorage.setItem('gearmarket_user', JSON.stringify(user));
     } else {
@@ -49,48 +37,83 @@ export function AppProvider({ children }) {
     }
   }, [token, user]);
 
-  useEffect(() => {
-    localStorage.setItem(PUBLICATIONS_STORAGE_KEY, JSON.stringify(publications));
-  }, [publications]);
-
-  useEffect(() => {
-    if (publications.length === 0) {
-      fetchPublications();
-    }
+  const applyFavoriteFlags = useCallback((items, ids) => {
+    return items.map((publication) => normalizePublication({
+      ...publication,
+      isFavorite: ids.includes(Number(publication.id)),
+    }));
   }, []);
 
-  const fetchPublications = async () => {
+  const fetchFavorites = useCallback(async () => {
+    if (!token) {
+      setFavoriteIds([]);
+      return [];
+    }
+
+    const response = await favoritesService.getAll();
+    const ids = response.data.map((favorite) => Number(favorite.publication_id));
+    setFavoriteIds(ids);
+    return ids;
+  }, [token]);
+
+  const fetchPublications = useCallback(async () => {
     setLoading(true);
     try {
       const response = await publicationsService.getAll();
-      const sourceData = Array.isArray(response.data) && response.data.length > 0 ? response.data : mockPublications;
-      setPublications(sourceData.map((publication) => normalizePublication(publication, user || mockUser)));
-    } catch {
-      setPublications(mockPublications.map((publication) => normalizePublication(publication, user || mockUser)));
+      const ids = token ? await fetchFavorites() : [];
+      setPublications(applyFavoriteFlags(response.data, ids));
     } finally {
       setLoading(false);
     }
-  };
+  }, [applyFavoriteFlags, fetchFavorites, token]);
+
+  useEffect(() => {
+    fetchPublications().catch(() => {
+      setPublications([]);
+    });
+  }, [fetchPublications]);
+
+  useEffect(() => {
+    if (!token) {
+      setFavoriteIds([]);
+      setPublications((current) => current.map((item) => ({ ...item, isFavorite: false })));
+      return;
+    }
+
+    fetchFavorites()
+      .then((ids) => {
+        setPublications((current) => applyFavoriteFlags(current, ids));
+      })
+      .catch(() => {
+        setFavoriteIds([]);
+      });
+  }, [applyFavoriteFlags, fetchFavorites, token]);
 
   const login = async (credentials) => {
     const response = await authService.login(credentials);
-    setUser(response.data.user || mockUser);
-    setToken(response.data.token || 'mock-jwt-token');
+    setToken(response.data.token);
+    setUser(response.data.user);
     return response.data;
   };
 
   const register = async (payload) => {
     const response = await authService.register(payload);
-    setUser(response.data.user || mockUser);
-    setToken('mock-jwt-token');
+    setToken(response.data.token);
+    setUser(response.data.user);
     return response.data;
   };
 
   const logout = () => {
     setUser(null);
     setToken('');
-    localStorage.removeItem('gearmarket_token');
-    localStorage.removeItem('gearmarket_user');
+    setFavoriteIds([]);
+  };
+
+  const refreshProfile = async () => {
+    if (!token) return null;
+    const response = await profileService.get();
+    setUser(response.data);
+    return response.data;
   };
 
   const getPublicationById = useCallback(
@@ -99,79 +122,60 @@ export function AppProvider({ children }) {
     [publications],
   );
 
-  const toggleFavorite = (publicationId) => {
-    setPublications((current) =>
-      current.map((publication) =>
-        publication.id === publicationId
-          ? { ...publication, isFavorite: !publication.isFavorite }
-          : publication,
-      ),
-    );
+  const toggleFavorite = async (publicationId) => {
+    const numericId = Number(publicationId);
+
+    if (!token) {
+      setPublications((current) =>
+        current.map((publication) =>
+          publication.id === numericId
+            ? { ...publication, isFavorite: !publication.isFavorite }
+            : publication,
+        ),
+      );
+      return;
+    }
+
+    if (favoriteIds.includes(numericId)) {
+      await favoritesService.remove(numericId);
+      const ids = favoriteIds.filter((id) => id !== numericId);
+      setFavoriteIds(ids);
+      setPublications((current) => applyFavoriteFlags(current, ids));
+      return;
+    }
+
+    await favoritesService.add(numericId);
+    const ids = [...favoriteIds, numericId];
+    setFavoriteIds(ids);
+    setPublications((current) => applyFavoriteFlags(current, ids));
   };
 
   const createPublication = async (payload) => {
     const response = await publicationsService.create(payload);
-    const newPublication = normalizePublication(
-      {
-        id: response.data.publication_id || Date.now(),
-        ...payload,
-        seller: user || mockUser,
-        isFavorite: false,
-      },
-      user || mockUser,
-    );
-
-    setPublications((current) => [newPublication, ...current]);
-    return newPublication;
+    await fetchPublications();
+    return response.data;
   };
 
   const updatePublication = async (publicationId, payload) => {
-    const updatedPublication = normalizePublication(
-      {
-        ...getPublicationById(publicationId),
-        ...payload,
-        id: Number(publicationId),
-        seller: getPublicationById(publicationId)?.seller || user || mockUser,
-      },
-      user || mockUser,
-    );
-
-    try {
-      await publicationsService.update(publicationId, updatedPublication);
-    } catch {
-      // Fallback local ya cubierto abajo.
-    }
-
-    setPublications((current) =>
-      current.map((publication) =>
-        Number(publication.id) === Number(publicationId) ? updatedPublication : publication,
-      ),
-    );
-
-    return updatedPublication;
+    await publicationsService.update(publicationId, payload);
+    await fetchPublications();
+    return getPublicationById(publicationId);
   };
 
   const deletePublication = async (publicationId) => {
-    try {
-      await publicationsService.remove(publicationId);
-    } catch {
-      // Fallback local ya cubierto abajo.
-    }
-
-    setPublications((current) =>
-      current.filter((publication) => Number(publication.id) !== Number(publicationId)),
-    );
+    await publicationsService.remove(publicationId);
+    await fetchPublications();
   };
 
   const filteredPublications = useMemo(() => {
     return publications.filter((publication) => {
+      const search = filters.search.toLowerCase();
       const matchSearch =
-        publication.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-        publication.location.toLowerCase().includes(filters.search.toLowerCase()) ||
-        publication.category.toLowerCase().includes(filters.search.toLowerCase());
+        publication.title.toLowerCase().includes(search) ||
+        publication.location.toLowerCase().includes(search) ||
+        publication.category.toLowerCase().includes(search);
 
-      const matchCategory =
-        filters.category === 'todos' || publication.category === filters.category;
+      const matchCategory = filters.category === 'todos' || publication.category === filters.category;
 
       return matchSearch && matchCategory;
     });
@@ -179,7 +183,7 @@ export function AppProvider({ children }) {
 
   const favorites = publications.filter((publication) => publication.isFavorite);
   const myPublications = publications.filter(
-    (publication) => publication.seller?.id === (user?.id || mockUser.id),
+    (publication) => Number(publication.seller?.id) === Number(user?.id),
   );
 
   const value = {
@@ -190,11 +194,13 @@ export function AppProvider({ children }) {
     filteredPublications,
     favorites,
     myPublications,
+    favoriteIds,
     filters,
     setFilters,
     login,
     register,
     logout,
+    refreshProfile,
     toggleFavorite,
     createPublication,
     updatePublication,

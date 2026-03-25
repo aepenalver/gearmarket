@@ -54,6 +54,11 @@ function Navbar() {
                     Favoritos
                   </NavLink>
                 </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/mensajes">
+                    Mensajes
+                  </NavLink>
+                </li>
                 <li className="nav-item ms-lg-3">
                   <span className="small text-light d-block">Hola, {user?.name}</span>
                 </li>

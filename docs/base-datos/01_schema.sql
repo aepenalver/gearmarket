@@ -1,6 +1,9 @@
--- Esquema inicial PostgreSQL
+-- Hito 3 - Esquema PostgreSQL GearMarket
+CREATE DATABASE gearmarket;
 
-CREATE TABLE users (
+\c gearmarket;\
+
+CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(120) NOT NULL UNIQUE,
@@ -9,7 +12,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE publications (
+CREATE TABLE IF NOT EXISTS publications (
   id SERIAL PRIMARY KEY,
   title VARCHAR(150) NOT NULL,
   description TEXT NOT NULL,
@@ -21,14 +24,14 @@ CREATE TABLE publications (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE favorites (
+CREATE TABLE IF NOT EXISTS favorites (
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   publication_id INT NOT NULL REFERENCES publications(id) ON DELETE CASCADE,
   UNIQUE (user_id, publication_id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
   id SERIAL PRIMARY KEY,
   sender_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   receiver_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

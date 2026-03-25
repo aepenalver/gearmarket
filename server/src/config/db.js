@@ -17,6 +17,20 @@ function getPool() {
   return pool;
 }
 
+async function testConnection() {
+  try {
+    const activePool = await getPool();
+    const client = await activePool.connect();
+    console.log('Database connected successfully');
+    client.release();
+  } catch (err) {
+    console.error('Error connecting to the database:', err.message);
+    process.exit(1);
+  }
+}
+
+testConnection();
+
 async function query(text, params = []) {
   return getPool().query(text, params);
 }

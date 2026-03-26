@@ -55,6 +55,34 @@ cd gearmarket
 └── server         # Backend: API REST, lógica de negocio y base de datos
 ```
 
+## Puesta en marcha
+
+### 1. Base de datos
+
+Crear la base de datos `gearmarket` y ejecutar contenido de los siguientes archivos:
+
+- `docs/base-datos/01_schema.sql`
+- `docs/base-datos/02_seed.sql`
+
+### 2. Backend
+
+```bash
+cd server
+npm install
+cp .env.example .env
+npm test
+npm run dev
+```
+
+### 3. Frontend
+
+```bash
+cd client
+npm install
+cp .env.example .env
+npm run dev
+```
+
 ## Autores
 
 [Daniel Aros](https://github.com/magicux)\

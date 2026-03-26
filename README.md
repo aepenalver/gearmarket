@@ -14,11 +14,11 @@ Muchos deportistas venden o compran equipamiento usado (bicicletas, pesas, zapat
 
 _GearMarket_ será un marketplace especializado en equipamiento deportivo.
 
-## Público objetivo
+## Público Objetivo
 
 Personas mayores de edad que practican deporte y desean comprar o vender equipamiento deportivo usado o seminuevo.
 
-## Propuesta de valor
+## Propuesta de Valor
 
 Permitir que deportistas compren y vendan equipamiento deportivo de manera simple, rápida y organizada, dentro de un marketplace especializado.
 
@@ -26,9 +26,20 @@ Permitir que deportistas compren y vendan equipamiento deportivo de manera simpl
 
 Ir a directorio → [/docs](./docs/)
 
+## Tecnologías Empleadas
+
+- Node JS
+- JavaScript
+- Express JS
+- PostgreSQL
+
 ## Requisitos
 
 - Tener instalada una terminal o consola de comandos.
+- Node.js 18+
+- PostgreSQL 14+
+- npm
+- Opcional: Tener instalado algún "Cliente API"
 
 ## Instalación
 
@@ -46,7 +57,7 @@ git clone https://github.com/aepenalver/gearmarket
 cd gearmarket
 ```
 
-## Estructura del proyecto
+## Estructura del Proyecto
 
 ```bash
 .
@@ -55,9 +66,9 @@ cd gearmarket
 └── server         # Backend: API REST, lógica de negocio y base de datos
 ```
 
-## Puesta en marcha
+## Puesta en Marcha
 
-### 1. Base de datos
+### 1. Base de Datos
 
 Crear la base de datos `gearmarket` y ejecutar contenido de los siguientes archivos:
 

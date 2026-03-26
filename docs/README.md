@@ -15,5 +15,5 @@ Ir a [Requerimientos Hito 1](./hitos-desarrollo/checklist-hito1.md)
 ## Hito 3 - Desarrollo Backend
 
 - [Checklist de cumplimiento Hito 3](./hitos-desarrollo/checklist-hito3.md)
-- [Resumen de entregables - Hito 3](./hitos-desarrollo/resumen-entregables-hito3.md)
+- [Resumen de entregables Hito 3](./hitos-desarrollo/resumen-entregables-hito3.md)
 - [Backend](../server/README.md)

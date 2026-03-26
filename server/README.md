@@ -44,3 +44,20 @@ npm test
 - `/api/v1/favorites`
 - `/api/v1/messages`
 - `/api/v1/profile`
+
+## Estructura
+
+```bash
+.
+├── src
+│   ├── server.js           # PUNTO DE ENTRADA: Entrada de la app.
+│   ├── app.js              # CONFIGURACIÓN: Express, middlewares globales y declaración de rutas.
+│   ├── config              # AJUSTES: Conexión a la Dase de Datos
+│   ├── controllers         # LÓGICA DE CONTROL: Recibe req, llama al modelo y envía res.
+│   ├── middlewares         # FILTROS: Validaciones de datos, autenticación (JWT) y manejo de errores.
+│   ├── models              # CAPA DE DATOS: Consultas SQL y lógica de interacción con la DB.
+│   ├── routes              # DEFINICIÓN DE RUTAS: Mapeo de endpoints hacia controladores.
+│   └── utils               # HELPERS: Funciones reutilizables.
+├── tests                   # CAPA DE PRUEBAS: Tests automatizados
+└── package.json            # Configuración del proyecto, scripts y dependencias.
+```

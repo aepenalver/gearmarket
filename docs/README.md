@@ -17,3 +17,8 @@ Ir a [Requerimientos Hito 1](./hitos-desarrollo/checklist-hito1.md)
 - [Checklist de cumplimiento Hito 3](./hitos-desarrollo/checklist-hito3.md)
 - [Resumen de entregables Hito 3](./hitos-desarrollo/resumen-entregables-hito3.md)
 - [Backend](../server/README.md)
+
+## Hito 4 - Integración y Despliegue
+
+- [Checklist de cumplimiento Hito 4](./hitos-desarrollo/checklist-hito4.md)
+- [Despliegue GearMarket](https://gearmarket.onrender.com/)

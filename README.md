@@ -4,6 +4,8 @@ Marketplace de artículos deportivos
 
 ![logo](./docs/assets/logo1.jpeg)
 
+>  **Deploy:** [GearMarket](https://gearmarket.onrender.com/)
+
 ## Problema que resuelve
 
 Muchos deportistas venden o compran equipamiento usado (bicicletas, pesas, zapatillas técnicas, accesorios, entre otros) en plataformas genéricas como Marketplace (Facebook) o grupos en redes sociales, donde:
@@ -21,6 +23,10 @@ Personas mayores de edad que practican deporte y desean comprar o vender equipam
 ## Propuesta de Valor
 
 Permitir que deportistas compren y vendan equipamiento deportivo de manera simple, rápida y organizada, dentro de un marketplace especializado.
+
+---
+**Puedes ver la aplicación en vivo aquí:** [GearMarket Demo](https://gearmarket.onrender.com/)
+---
 
 ## Propuesta, Diseño y Requerimientos
 
